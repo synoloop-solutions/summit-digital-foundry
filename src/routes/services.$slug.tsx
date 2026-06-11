@@ -82,7 +82,7 @@ function ServiceDetail() {
             <>
               <h2 className="mt-12 font-serif text-2xl text-[var(--navy-deep)]">Related case studies</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                {related.map((c: string) => (
+                {related.map((c) => (
                   <Link key={c.slug} to="/case-studies/$slug" params={{ slug: c.slug }} className="rounded-lg border border-border bg-card p-4 hover:border-[var(--gold)]">
                     <p className="text-xs uppercase tracking-wider text-muted-foreground">{c.industry}</p>
                     <h3 className="mt-1 font-serif text-base text-[var(--navy-deep)]">{c.title}</h3>
