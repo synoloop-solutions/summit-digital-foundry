@@ -78,6 +78,31 @@ function ServiceDetail() {
             {service.outcomes.map((o: string) => (<li key={o} className="flex gap-2"><Check className="h-4 w-4 text-[var(--gold)] mt-0.5" />{o}</li>))}
           </ul>
 
+          <h2 className="mt-12 font-serif text-2xl text-[var(--navy-deep)]">Typical engagement shape</h2>
+          <ol className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { t: "Discover", d: "2–3 weeks scoping current state, hypotheses, and quick wins." },
+              { t: "Design", d: "4–6 weeks defining the target state and implementation roadmap." },
+              { t: "Deliver", d: "12–24 weeks driving execution alongside client teams." },
+              { t: "Sustain", d: "Ongoing enablement so changes hold after we leave." },
+            ].map((step, idx) => (
+              <li key={step.t} className="rounded-lg border border-border bg-card p-4">
+                <p className="text-xs uppercase tracking-wider text-[var(--gold)]">Step {idx + 1}</p>
+                <p className="mt-1 font-serif text-base text-[var(--navy-deep)]">{step.t}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{step.d}</p>
+              </li>
+            ))}
+          </ol>
+
+          <h2 className="mt-12 font-serif text-2xl text-[var(--navy-deep)]">Sample deliverables</h2>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground">
+            {["Current-state diagnostic", "Target operating model", "Implementation roadmap", "Business case & KPIs", "Executive readout deck", "Capability enablement plan"].map((d) => (
+              <li key={d} className="flex items-start gap-2 rounded-lg border border-border bg-card p-3">
+                <Check className="h-4 w-4 shrink-0 text-[var(--gold)] mt-0.5" /> {d}
+              </li>
+            ))}
+          </ul>
+
           {related.length > 0 && (
             <>
               <h2 className="mt-12 font-serif text-2xl text-[var(--navy-deep)]">Related case studies</h2>
