@@ -66,7 +66,7 @@ function ServiceDetail() {
           <Icon className="h-10 w-10 text-[var(--navy-deep)]" />
           <h2 className="mt-6 font-serif text-2xl text-[var(--navy-deep)]">What we do</h2>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {service.capabilities.map((c) => (
+            {service.capabilities.map((c: string) => (
               <li key={c} className="flex items-start gap-2 rounded-lg border border-border bg-card p-4 text-sm">
                 <Check className="h-4 w-4 shrink-0 text-[var(--gold)]" /> {c}
               </li>
@@ -75,14 +75,14 @@ function ServiceDetail() {
 
           <h2 className="mt-12 font-serif text-2xl text-[var(--navy-deep)]">Outcomes you can expect</h2>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-            {service.outcomes.map((o) => (<li key={o} className="flex gap-2"><Check className="h-4 w-4 text-[var(--gold)] mt-0.5" />{o}</li>))}
+            {service.outcomes.map((o: string) => (<li key={o} className="flex gap-2"><Check className="h-4 w-4 text-[var(--gold)] mt-0.5" />{o}</li>))}
           </ul>
 
           {related.length > 0 && (
             <>
               <h2 className="mt-12 font-serif text-2xl text-[var(--navy-deep)]">Related case studies</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                {related.map((c) => (
+                {related.map((c: string) => (
                   <Link key={c.slug} to="/case-studies/$slug" params={{ slug: c.slug }} className="rounded-lg border border-border bg-card p-4 hover:border-[var(--gold)]">
                     <p className="text-xs uppercase tracking-wider text-muted-foreground">{c.industry}</p>
                     <h3 className="mt-1 font-serif text-base text-[var(--navy-deep)]">{c.title}</h3>

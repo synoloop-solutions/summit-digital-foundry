@@ -72,7 +72,7 @@ function CaseStudyDetail() {
 
           <h2 className="mt-10 font-serif text-2xl text-[var(--navy-deep)]">Our approach</h2>
           <ol className="mt-2 list-decimal pl-5 space-y-2 text-muted-foreground">
-            {cs.approach.map((a) => <li key={a}>{a}</li>)}
+            {cs.approach.map((a: string) => <li key={a}>{a}</li>)}
           </ol>
 
           <h2 className="mt-10 font-serif text-2xl text-[var(--navy-deep)]">The outcome</h2>

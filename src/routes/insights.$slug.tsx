@@ -56,7 +56,7 @@ function InsightDetail() {
       <article className="mx-auto max-w-3xl px-6 py-16">
         <p className="text-sm text-muted-foreground">By {i.author} · {new Date(i.date).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })} · {i.readingMinutes} min read</p>
         <div className="mt-8 space-y-5 text-foreground/90 leading-relaxed">
-          {i.body.map((p, idx) => <p key={idx}>{p}</p>)}
+          {i.body.map((p: string, idx: number) => <p key={idx}>{p}</p>)}
         </div>
       </article>
       <CTASection />

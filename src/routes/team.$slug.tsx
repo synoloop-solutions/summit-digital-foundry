@@ -51,7 +51,7 @@ function TeamDetail() {
           <p className="mt-3 text-muted-foreground">{member.bio}</p>
           <h3 className="mt-8 font-serif text-lg text-[var(--navy-deep)]">Focus areas</h3>
           <ul className="mt-3 flex flex-wrap gap-2">
-            {member.focus.map((f) => <li key={f} className="rounded-full border border-border px-3 py-1 text-xs">{f}</li>)}
+            {member.focus.map((f: string) => <li key={f} className="rounded-full border border-border px-3 py-1 text-xs">{f}</li>)}
           </ul>
         </div>
       </section>

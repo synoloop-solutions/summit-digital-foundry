@@ -63,9 +63,9 @@ function JobDetail() {
       <section className="mx-auto max-w-7xl px-6 py-16 grid gap-12 lg:grid-cols-[2fr_1fr]">
         <div>
           <h2 className="font-serif text-2xl text-[var(--navy-deep)]">What you'll do</h2>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-muted-foreground">{job.responsibilities.map((r) => <li key={r}>{r}</li>)}</ul>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-muted-foreground">{job.responsibilities.map((r: string) => <li key={r}>{r}</li>)}</ul>
           <h2 className="mt-10 font-serif text-2xl text-[var(--navy-deep)]">What we look for</h2>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-muted-foreground">{job.qualifications.map((q) => <li key={q}>{q}</li>)}</ul>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-muted-foreground">{job.qualifications.map((q: string) => <li key={q}>{q}</li>)}</ul>
         </div>
         <aside className="rounded-2xl border border-border bg-[var(--surface)] p-6 h-fit lg:sticky lg:top-24">
           <h3 className="font-serif text-lg text-[var(--navy-deep)]">Apply for this role</h3>

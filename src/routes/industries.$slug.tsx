@@ -48,7 +48,7 @@ function IndustryDetail() {
       <section className="mx-auto max-w-7xl px-6 py-16">
         <h2 className="font-serif text-2xl text-[var(--navy-deep)]">Where we add value</h2>
         <ul className="mt-4 grid gap-3 sm:grid-cols-3">
-          {industry.highlights.map((h) => (
+          {industry.highlights.map((h: string) => (
             <li key={h} className="flex items-start gap-2 rounded-lg border border-border bg-card p-4 text-sm">
               <Check className="h-4 w-4 text-[var(--gold)] mt-0.5" /> {h}
             </li>
