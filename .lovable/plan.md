@@ -1,138 +1,80 @@
+# Fix detail-page navigation across the site
 
-# Summit Advisory Group — Corporate Website (revised)
+## Root cause
 
-Production-style consulting firm site on the existing TanStack Start + Tailwind v4 + shadcn/ui stack. All content mock; forms, newsletter, cookie prefs, downloads, and bookings persist to LocalStorage. No backend.
+All six detail routes already exist and are wired correctly:
 
-## Design system
+- `careers.$slug.tsx`, `case-studies.$slug.tsx`, `industries.$slug.tsx`,
+  `insights.$slug.tsx`, `services.$slug.tsx`, `team.$slug.tsx`
 
-- Tokens in `src/styles.css` via `@theme inline` + `:root`: `--navy`, `--navy-deep`, `--blue`, `--gold`, `--bg`, `--surface`, `--muted`, `--foreground`, `--border`; mapped to shadcn semantic vars.
-- Type: serif display (Fraunces) for headlines, Inter for body, loaded via `<link>` in `__root.tsx`.
-- Spacious sections, restrained Framer Motion (respects `prefers-reduced-motion`).
+The listing pages all use the correct typed `<Link to="/.../$slug" params={{ slug }}>`
+pattern (verified in `careers.tsx`, `case-studies.tsx`, `industries.tsx`,
+`insights.tsx`, `services.tsx`, `team.tsx`, and `about.tsx`).
 
-## Routes (`src/routes/`)
+The reason clicks appear to "redirect to the parent page" is a runtime
+error captured in the preview:
 
 ```
-__root.tsx                  shell: header, footer, cookie banner, sitewide meta, Organization JSON-LD
-index.tsx                   Home
-about.tsx
-services.tsx
-services.$slug.tsx
-industries.tsx
-industries.$slug.tsx
-case-studies.tsx            filter / search / pagination
-case-studies.$slug.tsx      detail w/ KPI cards + download
-team.tsx
-team.$slug.tsx
-insights.tsx
-insights.$slug.tsx
-careers.tsx
-careers.$slug.tsx
-contact.tsx
-resources.tsx
-book-consultation.tsx       NEW: dedicated booking flow
-our-process.tsx             NEW: methodology page
-faq.tsx                     NEW
-search.tsx
-privacy.tsx, terms.tsx, cookie-policy.tsx, accessibility.tsx
-sitemap[.]xml.ts
+Failed to fetch dynamically imported module:
+/@id/virtual:tanstack-start-client-entry
 ```
 
-Each leaf route owns `head()` with title, description, og:title/description, og:url, canonical. Article / case-study / service / FAQ routes emit JSON-LD (`Article`, `Service`, `FAQPage`, `BreadcrumbList`). Root emits `Organization` only (no canonical, no og:image).
+The dev server's client entry chunk is stale, so every client-side
+navigation that needs to load a new route chunk silently fails and the
+router stays on (or falls back to) the current/listing page. This is a
+sandbox state issue, not a code bug.
 
-## Mock data (`src/data/`, typed TS modules)
+## Plan
 
-- `company.ts`, `services.ts`, `industries.ts`, `team.ts`, `insights.ts`, `testimonials.ts`, `careers.ts`, `resources.ts`, `faqs.ts` (grouped: engagement, consultation, industries, timelines, pricing).
-- `caseStudies.ts` — each entry adds a `metrics` block:
-  ```ts
-  metrics: {
-    revenueGrowth?: string;     // "+38%"
-    costReduction?: string;     // "-22%"
-    processEfficiency?: string; // "+45%"
-    customerSatisfaction?: string; // "94 NPS"
-    timeSaved?: string;         // "1,200 hrs/qtr"
-  }
-  ```
-- `trust.ts` — `clientLogos[]`, `certifications[]` (ISO, SOC2, etc.), `awards[]`, `memberships[]` (e.g. ICMCI, AICPA). Each row has name + logo URL.
-- `images.ts` — central registry of all Unsplash URLs.
+1. **Restart the dev server** so the client entry and route chunks are
+   regenerated. After restart, navigate from each listing to a detail
+   route in the preview (services, industries, case studies, insights,
+   team, careers) to confirm `/services/strategy-consulting`,
+   `/team/elena-mercado`, `/careers/senior-consultant-strategy`, etc.
+   render their detail components.
 
-## Shared components (`src/components/`)
+2. **Enrich the thin detail pages** so the "View role / Read more / View
+   case study" CTAs land on pages that clearly add information beyond
+   the listing card:
 
-- Layout: `SiteHeader` (sticky, search dialog, "Book Consultation" CTA), `SiteFooter`, `MobileStickyCTA` (links to `/book-consultation`).
-- Sections: `SectionHeader`, `Stat`, `CTASection`, `Breadcrumbs` (+ schema).
-- Trust band (home): `ClientLogoWall`, `CertificationsRow`, `AwardsRow`, `MembershipsRow`.
-- Case studies: `CaseStudyCard`, `CaseStudyFilters`, `KpiCard`, `KpiGrid` (renders the 5 metrics with icons + animated count-up), `CaseStudyDownloadButton` (generates a mock PDF client-side via `jsPDF` and triggers download; also logs the request to `sag:downloads`).
-- Forms (react-hook-form + zod, persist to LocalStorage):
-  - `NewsletterForm` → `sag:newsletter`
-  - `ContactForm` → `sag:contact`
-  - `ConsultationForm` (inline, on services/home) → `sag:consultations`
-  - `BookingForm` (full page) → `sag:bookings`
-  - `ApplicationForm` → `sag:applications`
-  - `ResourceDownloadForm` → `sag:downloads`
-- States: `LoadingSkeleton`, `EmptyState`, `FormSuccess`, `NotFound`, error boundaries.
-- Compliance: `CookieBanner`, `CookiePreferencesModal` → `sag:cookies`.
+   - `careers.$slug.tsx`: add a "Compensation & benefits" block and an
+     "About the team" paragraph sourced from `jobs[].team`. Keep the
+     existing apply form.
+   - `team.$slug.tsx`: add an "Experience" list, a "Speaking & writing"
+     section linking to 2–3 related insights by focus area, and related
+     case studies the partner led.
+   - `insights.$slug.tsx`: add an author byline card and a "Related
+     reading" list (3 other insights from the same category).
+   - `industries.$slug.tsx`: add a "Representative engagements" list
+     (case studies filtered by `industrySlug`) and a "Services we bring
+     to this industry" grid.
+   - `services.$slug.tsx`: already has related case studies; add a
+     "Typical engagement shape" timeline (Discover → Design → Deliver →
+     Sustain) and a "Sample deliverables" list.
+   - `case-studies.$slug.tsx`: already rich (KPIs + PDF). Add a "Team
+     on this engagement" row showing 2–3 `team` members and a
+     timeline/duration field.
 
-## New page details
+3. **Data tweaks** (`src/data/`):
+   - `careers.ts`: add optional `benefits: string[]` and
+     `aboutTeam: string` per job.
+   - `team.ts`: add optional `experience: string[]` and
+     `caseStudies: string[]` (slugs) per member.
+   - `caseStudies.ts`: add optional `teamSlugs: string[]` and
+     `duration: string` per case study.
+   - All new fields are optional so existing render paths keep working.
 
-### `/book-consultation`
-Two-column layout: left = value-prop + what-to-expect bullets + testimonial; right = `BookingForm` with fields **Name, Company, Email, Service interest (select from `services.ts`), Preferred date (shadcn Calendar in popover), Preferred time (select, 30-min slots 9:00–17:00), Notes (textarea)**. Zod-validated. On submit → push to `sag:bookings`, show success state with reference ID, "Add to calendar" stub (download `.ics`).
+4. **Verify**: open each detail URL in the preview, confirm no console
+   errors, and confirm the detail page shows materially more content
+   than the listing card.
 
-### `/our-process`
-Five numbered stages with icon + description + deliverables list: **Discovery, Analysis, Strategy, Implementation, Optimization**. Sticky side-rail with anchor nav on desktop; vertical timeline on mobile. CTA at bottom → `/book-consultation`.
+## Technical notes
 
-### `/faq`
-Sections: Engagement process, Consultation process, Industries served, Project timelines, Pricing approach. Uses shadcn `Accordion`. Emits `FAQPage` JSON-LD built from the same `faqs.ts` source.
-
-### Case study detail enhancements
-- KPI grid (5 cards) at top under hero, animated count-up on viewport enter.
-- Sticky "Download Full Case Study (PDF)" button → `jsPDF` builds a branded 2-page PDF (cover + content) from the case study data and downloads it; logs to `sag:downloads`.
-
-### Home — trust block
-New section between testimonials and insights:
-1. Client logo wall (grayscale, hover color) — 8 logos.
-2. Certifications row (4 badges).
-3. Awards row (3–4 awards with year).
-4. Professional memberships row.
-
-## Header / footer updates
-
-- Primary nav: About, Services, Industries, Case Studies, Our Process, Insights, Careers, Contact. "FAQ" lives in footer + linked from Contact and Booking pages.
-- Header CTA changes from "Schedule Consultation" → "Book Consultation" linking to `/book-consultation`.
-- Footer "Company" column adds Our Process, FAQ.
-
-## SEO / a11y / perf
-
-- Per-route `head()` + canonical on leaves; JSON-LD per schema picker; `FAQPage` on `/faq`; `BreadcrumbList` on all detail routes.
-- `public/robots.txt` (Allow all). `src/routes/sitemap[.]xml.ts` enumerating static routes + dynamic slugs (services, industries, case studies, team, insights, careers).
-- Single `<main>`, skip link, semantic headings (one H1/page), labeled icon buttons, focus rings via tokens, AA contrast verified on navy/gold, `h-dvh` for mobile hero, `prefers-reduced-motion` honored.
-- Unsplash URLs sized via `?w=` query, `width`/`height` set, `loading="lazy"` (hero eager + preloaded), `aspect-*` wrappers to prevent CLS.
-- Route-level code splitting (TanStack default); jsPDF dynamically imported only inside `CaseStudyDownloadButton`.
-
-## Final QA checklist (run before close-out)
-
-1. Click every header + footer nav link → 200 / correct route.
-2. Click every CTA across all pages → correct destination, no dead buttons.
-3. Visit every dynamic slug (services, industries, case studies, team, insights, careers) → renders with data; non-existent slug → `notFoundComponent`.
-4. Submit every form → success state shown, entry appears in matching `localStorage` key.
-5. Resize 320 / 375 / 768 / 1024 / 1440 → no horizontal scroll, no overlap, no clipped text, tap targets ≥ 44px.
-6. Inspect each page → exactly one `<main>`, one H1, all `<img>` have alt, all icon-only buttons have `aria-label`.
-7. DevTools console clean on every page (load + interactions).
-8. `bun run build` succeeds; no TS errors.
-9. Cookie banner → Accept / Reject / Customize all persist correctly to `sag:cookies`.
-10. Case study PDF downloads on desktop + mobile; booking `.ics` downloads and opens in calendar apps.
-
-## Out of scope
-
-- Real auth, payments, email sending.
-- Real map (placeholder image in `/contact`).
-- MDX article compilation (articles are structured JSX from data).
-
-## Build order
-
-1. Tokens, fonts, `__root` shell, cookie banner, sitewide meta.
-2. Data modules (incl. `trust.ts`, `faqs.ts`, `caseStudies.ts` w/ metrics).
-3. Shared components + forms + KPI grid + PDF generator + booking form.
-4. Home (with trust block) → About → Services / Industries (+ detail).
-5. Case Studies (+ detail w/ KPIs + PDF) → Team (+ detail) → Insights (+ detail).
-6. Our Process → FAQ → Book Consultation → Careers → Contact → Resources → Search.
-7. Legal pages, sitemap, robots, JSON-LD sweep.
-8. Final QA pass per checklist above.
+- No router or routeTree changes required — files already register
+  correctly in `src/routeTree.gen.ts`.
+- No new dependencies.
+- All link patterns stay `<Link to="/x/$slug" params={{ slug }}>`; no
+  string interpolation.
+- The restart in step 1 is the actual fix for the user-visible
+  "redirects to parent" symptom; steps 2–3 address the underlying
+  request that the detail pages show "more detailed information".
