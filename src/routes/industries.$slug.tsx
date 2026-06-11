@@ -3,8 +3,9 @@ import { Check } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { CTASection } from "@/components/CTASection";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { getIndustry } from "@/data/industries";
+import { getIndustry, industries } from "@/data/industries";
 import { caseStudies } from "@/data/caseStudies";
+import { services } from "@/data/services";
 import { images } from "@/data/images";
 
 export const Route = createFileRoute("/industries/$slug")({
