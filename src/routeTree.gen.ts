@@ -28,6 +28,9 @@ import { Route as BookConsultationRouteImport } from './routes/book-consultation
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InsightsIndexRouteImport } from './routes/insights.index'
+import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
+import { Route as CaseStudiesIndexRouteImport } from './routes/case-studies.index'
 import { Route as TeamSlugRouteImport } from './routes/team.$slug'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as InsightsSlugRouteImport } from './routes/insights.$slug'
@@ -130,6 +133,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InsightsIndexRoute = InsightsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InsightsRoute,
+} as any)
+const IndustriesIndexRoute = IndustriesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => IndustriesRoute,
+} as any)
+const CaseStudiesIndexRoute = CaseStudiesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CaseStudiesRoute,
+} as any)
 const TeamSlugRoute = TeamSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -187,6 +205,9 @@ export interface FileRoutesByFullPath {
   '/insights/$slug': typeof InsightsSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/case-studies/': typeof CaseStudiesIndexRoute
+  '/industries/': typeof IndustriesIndexRoute
+  '/insights/': typeof InsightsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -194,12 +215,9 @@ export interface FileRoutesByTo {
   '/accessibility': typeof AccessibilityRoute
   '/book-consultation': typeof BookConsultationRoute
   '/careers': typeof CareersRouteWithChildren
-  '/case-studies': typeof CaseStudiesRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/faq': typeof FaqRoute
-  '/industries': typeof IndustriesRouteWithChildren
-  '/insights': typeof InsightsRouteWithChildren
   '/our-process': typeof OurProcessRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
@@ -214,6 +232,9 @@ export interface FileRoutesByTo {
   '/insights/$slug': typeof InsightsSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/case-studies': typeof CaseStudiesIndexRoute
+  '/industries': typeof IndustriesIndexRoute
+  '/insights': typeof InsightsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -242,6 +263,9 @@ export interface FileRoutesById {
   '/insights/$slug': typeof InsightsSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/case-studies/': typeof CaseStudiesIndexRoute
+  '/industries/': typeof IndustriesIndexRoute
+  '/insights/': typeof InsightsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -271,6 +295,9 @@ export interface FileRouteTypes {
     | '/insights/$slug'
     | '/services/$slug'
     | '/team/$slug'
+    | '/case-studies/'
+    | '/industries/'
+    | '/insights/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -278,12 +305,9 @@ export interface FileRouteTypes {
     | '/accessibility'
     | '/book-consultation'
     | '/careers'
-    | '/case-studies'
     | '/contact'
     | '/cookie-policy'
     | '/faq'
-    | '/industries'
-    | '/insights'
     | '/our-process'
     | '/privacy'
     | '/resources'
@@ -298,6 +322,9 @@ export interface FileRouteTypes {
     | '/insights/$slug'
     | '/services/$slug'
     | '/team/$slug'
+    | '/case-studies'
+    | '/industries'
+    | '/insights'
   id:
     | '__root__'
     | '/'
@@ -325,6 +352,9 @@ export interface FileRouteTypes {
     | '/insights/$slug'
     | '/services/$slug'
     | '/team/$slug'
+    | '/case-studies/'
+    | '/industries/'
+    | '/insights/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -484,6 +514,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/insights/': {
+      id: '/insights/'
+      path: '/'
+      fullPath: '/insights/'
+      preLoaderRoute: typeof InsightsIndexRouteImport
+      parentRoute: typeof InsightsRoute
+    }
+    '/industries/': {
+      id: '/industries/'
+      path: '/'
+      fullPath: '/industries/'
+      preLoaderRoute: typeof IndustriesIndexRouteImport
+      parentRoute: typeof IndustriesRoute
+    }
+    '/case-studies/': {
+      id: '/case-studies/'
+      path: '/'
+      fullPath: '/case-studies/'
+      preLoaderRoute: typeof CaseStudiesIndexRouteImport
+      parentRoute: typeof CaseStudiesRoute
+    }
     '/team/$slug': {
       id: '/team/$slug'
       path: '/$slug'
@@ -542,10 +593,12 @@ const CareersRouteWithChildren =
 
 interface CaseStudiesRouteChildren {
   CaseStudiesSlugRoute: typeof CaseStudiesSlugRoute
+  CaseStudiesIndexRoute: typeof CaseStudiesIndexRoute
 }
 
 const CaseStudiesRouteChildren: CaseStudiesRouteChildren = {
   CaseStudiesSlugRoute: CaseStudiesSlugRoute,
+  CaseStudiesIndexRoute: CaseStudiesIndexRoute,
 }
 
 const CaseStudiesRouteWithChildren = CaseStudiesRoute._addFileChildren(
@@ -554,10 +607,12 @@ const CaseStudiesRouteWithChildren = CaseStudiesRoute._addFileChildren(
 
 interface IndustriesRouteChildren {
   IndustriesSlugRoute: typeof IndustriesSlugRoute
+  IndustriesIndexRoute: typeof IndustriesIndexRoute
 }
 
 const IndustriesRouteChildren: IndustriesRouteChildren = {
   IndustriesSlugRoute: IndustriesSlugRoute,
+  IndustriesIndexRoute: IndustriesIndexRoute,
 }
 
 const IndustriesRouteWithChildren = IndustriesRoute._addFileChildren(
@@ -566,10 +621,12 @@ const IndustriesRouteWithChildren = IndustriesRoute._addFileChildren(
 
 interface InsightsRouteChildren {
   InsightsSlugRoute: typeof InsightsSlugRoute
+  InsightsIndexRoute: typeof InsightsIndexRoute
 }
 
 const InsightsRouteChildren: InsightsRouteChildren = {
   InsightsSlugRoute: InsightsSlugRoute,
+  InsightsIndexRoute: InsightsIndexRoute,
 }
 
 const InsightsRouteWithChildren = InsightsRoute._addFileChildren(
