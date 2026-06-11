@@ -40,10 +40,10 @@ export const Route = createFileRoute("/team/$slug")({
 function TeamDetail() {
   const { member } = Route.useLoaderData();
   const memberCases = (member.caseStudies ?? [])
-    .map((slug) => caseStudies.find((c) => c.slug === slug))
+    .map((slug: string) => caseStudies.find((c) => c.slug === slug))
     .filter(Boolean) as typeof caseStudies;
   const relatedInsights = insights
-    .filter((i) => member.focus.some((f) => i.category.toLowerCase().includes(f.toLowerCase().split(" ")[0])))
+    .filter((i) => member.focus.some((f: string) => i.category.toLowerCase().includes(f.toLowerCase().split(" ")[0])))
     .slice(0, 3);
   const otherPartners = team.filter((t) => t.slug !== member.slug).slice(0, 4);
 
@@ -76,7 +76,7 @@ function TeamDetail() {
             <>
               <h3 className="mt-10 font-serif text-xl text-[var(--navy-deep)]">Experience</h3>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground list-disc pl-5">
-                {member.experience.map((e) => <li key={e}>{e}</li>)}
+                {member.experience.map((e: string) => <li key={e}>{e}</li>)}
               </ul>
             </>
           )}
@@ -85,7 +85,7 @@ function TeamDetail() {
             <>
               <h3 className="mt-10 font-serif text-xl text-[var(--navy-deep)]">Education</h3>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground list-disc pl-5">
-                {member.education.map((e) => <li key={e}>{e}</li>)}
+                {member.education.map((e: string) => <li key={e}>{e}</li>)}
               </ul>
             </>
           )}

@@ -91,7 +91,7 @@ function JobDetail() {
             <>
               <h2 className="mt-10 font-serif text-2xl text-[var(--navy-deep)]">Compensation & benefits</h2>
               <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-                {job.benefits.map((b) => (
+                {job.benefits.map((b: string) => (
                   <li key={b} className="flex items-start gap-2 rounded-lg border border-border bg-card p-3 text-sm">
                     <Check className="h-4 w-4 shrink-0 text-[var(--gold)] mt-0.5" /> {b}
                   </li>
