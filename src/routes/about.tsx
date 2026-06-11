@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SectionHeader } from "@/components/SectionHeader";
 import { CTASection } from "@/components/CTASection";
+import { PageHero } from "@/components/PageHero";
 import { images } from "@/data/images";
 import { company } from "@/data/company";
 import { team } from "@/data/team";
-import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
