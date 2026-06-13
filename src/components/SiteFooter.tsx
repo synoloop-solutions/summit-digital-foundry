@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { company } from "@/data/company";
 import { NewsletterForm } from "./forms/NewsletterForm";
 import { useCookieConsent } from "./CookieConsent";
+import { Button } from "./ui/button";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -56,7 +57,16 @@ export function SiteFooter() {
             <li><Link to="/privacy" className="hover:text-white">Privacy</Link></li>
             <li><Link to="/terms" className="hover:text-white">Terms</Link></li>
             <li><Link to="/cookie-policy" className="hover:text-white">Cookies</Link></li>
-            <li><button type="button" onClick={openPreferences} className="cursor-pointer hover:text-white">Cookie Settings</button></li>
+            <li>
+              <Button
+                type="button"
+                variant="link"
+                onClick={openPreferences}
+                className="h-auto p-0 text-xs font-normal text-white/60 hover:text-white"
+              >
+                Cookie Settings
+              </Button>
+            </li>
             <li><Link to="/accessibility" className="hover:text-white">Accessibility</Link></li>
           </ul>
         </div>
