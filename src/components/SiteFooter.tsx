@@ -2,9 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { company } from "@/data/company";
 import { NewsletterForm } from "./forms/NewsletterForm";
+import { useCookieConsent } from "./CookieConsent";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const { openPreferences } = useCookieConsent();
   return (
     <footer className="bg-[var(--navy-deep)] text-white">
       <div className="mx-auto max-w-7xl px-6 py-16">
@@ -54,6 +56,7 @@ export function SiteFooter() {
             <li><Link to="/privacy" className="hover:text-white">Privacy</Link></li>
             <li><Link to="/terms" className="hover:text-white">Terms</Link></li>
             <li><Link to="/cookie-policy" className="hover:text-white">Cookies</Link></li>
+            <li><button type="button" onClick={openPreferences} className="cursor-pointer hover:text-white">Cookie Settings</button></li>
             <li><Link to="/accessibility" className="hover:text-white">Accessibility</Link></li>
           </ul>
         </div>

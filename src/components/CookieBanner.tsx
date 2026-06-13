@@ -1,21 +1,11 @@
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-
-const KEY = "sag:cookies";
+import { useCookieConsent } from "@/components/CookieConsent";
 
 export function CookieBanner() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    try {
-      if (!localStorage.getItem(KEY)) setShow(true);
-    } catch {}
-  }, []);
-  if (!show) return null;
-  const set = (val: string) => {
-    try { localStorage.setItem(KEY, JSON.stringify({ choice: val, ts: Date.now() })); } catch {}
-    setShow(false);
-  };
+  const { hasConsent, openPreferences, acceptAll, rejectNonEssential } = useCookieConsent();
+  if (hasConsent) return null;
+
   return (
     <div role="region" aria-label="Cookie consent" className="fixed inset-x-3 bottom-3 z-50 rounded-xl border border-border bg-background shadow-2xl md:left-auto md:right-6 md:max-w-md">
       <div className="p-5">
@@ -24,9 +14,9 @@ export function CookieBanner() {
           <Link to="/cookie-policy" className="underline">Cookie Policy</Link>.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button size="sm" className="bg-[var(--navy-deep)] hover:bg-[var(--navy)] text-white" onClick={() => set("accept")}>Accept all</Button>
-          <Button size="sm" variant="outline" onClick={() => set("reject")}>Reject non-essential</Button>
-          <Button size="sm" variant="ghost" onClick={() => set("custom")}>Customize</Button>
+          <Button size="sm" onClick={acceptAll}>Accept All</Button>
+          <Button size="sm" variant="outline" onClick={rejectNonEssential}>Reject Non-Essential</Button>
+          <Button size="sm" variant="ghost" onClick={openPreferences}>Customize Preferences</Button>
         </div>
       </div>
     </div>
