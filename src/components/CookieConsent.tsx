@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -169,10 +162,12 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
     setDialogOpen(true);
   };
 
-  const contextValue = useMemo(
-    () => ({ hasConsent: !hydrated || saved !== null, openPreferences, acceptAll, rejectNonEssential }),
-    [hydrated, saved],
-  );
+  const contextValue = {
+    hasConsent: !hydrated || saved !== null,
+    openPreferences,
+    acceptAll,
+    rejectNonEssential,
+  };
 
   return (
     <CookieConsentContext.Provider value={contextValue}>
