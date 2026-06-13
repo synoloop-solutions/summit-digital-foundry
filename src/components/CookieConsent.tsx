@@ -208,7 +208,9 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               title="Preference Cookies"
               description="Remember choices that personalize your experience."
               checked={draft.preferences}
-              onCheckedChange={(preferences) => setDraft((current) => ({ ...current, preferences }))}
+              onCheckedChange={(preferences) =>
+                setDraft((current) => ({ ...current, preferences }))
+              }
             />
           </div>
 
