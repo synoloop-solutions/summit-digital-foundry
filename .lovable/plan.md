@@ -1,80 +1,36 @@
-# Fix detail-page navigation across the site
+## Cookie Consent Functionality Plan
 
-## Root cause
+### 1. Centralize consent state and persistence
+- Replace the current one-value `choice` behavior with a typed preference model:
+  - `necessary: true`
+  - `analytics`, `marketing`, and `preferences` booleans
+  - `consentGiven: true`
+  - `updatedAt` timestamp
+- Add safe LocalStorage read/write helpers for `sag:cookies`, including validation and backward-compatible handling of the existing `{ choice, ts }` records.
+- Keep banner visibility, dialog visibility, editable draft preferences, and saved preferences as separate React state so opening Customize never records consent or prematurely dismisses the flow.
 
-All six detail routes already exist and are wired correctly:
+### 2. Build the working preferences dialog
+- Use the existing Radix/shadcn Dialog and Switch primitives.
+- Show Necessary Cookies as enabled and non-editable; provide labeled toggles for Analytics, Marketing, and Preference Cookies.
+- Implement Save Preferences, Accept All, Reject Non-Essential, and Close actions with consistent persistence behavior.
+- Ensure Close and Escape dismiss only the dialog without recording unsaved changes; on first visit, the banner remains available.
+- Make the dialog scroll safely on small screens and keep every action reachable.
 
-- `careers.$slug.tsx`, `case-studies.$slug.tsx`, `industries.$slug.tsx`,
-  `insights.$slug.tsx`, `services.$slug.tsx`, `team.$slug.tsx`
+### 3. Connect every entry point
+- Update banner buttons so Accept All and Reject Non-Essential save the complete preference object and dismiss the banner.
+- Make Customize Preferences open the dialog without saving or hiding the banner incorrectly.
+- Add a real “Cookie Settings” button in the footer that opens the same dialog and loads the current saved selections.
+- Lift consent control into a shared provider mounted at the root so the footer and banner use one source of truth.
 
-The listing pages all use the correct typed `<Link to="/.../$slug" params={{ slug }}>`
-pattern (verified in `careers.tsx`, `case-studies.tsx`, `industries.tsx`,
-`insights.tsx`, `services.tsx`, `team.tsx`, and `about.tsx`).
+### 4. Accessibility behavior
+- Preserve Radix focus trapping, Escape handling, overlay behavior, and focus restoration.
+- Provide a titled/described dialog, associated labels and descriptions for every switch, clear disabled semantics for Necessary Cookies, and accessible names for close/actions.
+- Use proper Button components and keyboard-reachable controls throughout.
 
-The reason clicks appear to "redirect to the parent page" is a runtime
-error captured in the preview:
-
-```
-Failed to fetch dynamically imported module:
-/@id/virtual:tanstack-start-client-entry
-```
-
-The dev server's client entry chunk is stale, so every client-side
-navigation that needs to load a new route chunk silently fails and the
-router stays on (or falls back to) the current/listing page. This is a
-sandbox state issue, not a code bug.
-
-## Plan
-
-1. **Restart the dev server** so the client entry and route chunks are
-   regenerated. After restart, navigate from each listing to a detail
-   route in the preview (services, industries, case studies, insights,
-   team, careers) to confirm `/services/strategy-consulting`,
-   `/team/elena-mercado`, `/careers/senior-consultant-strategy`, etc.
-   render their detail components.
-
-2. **Enrich the thin detail pages** so the "View role / Read more / View
-   case study" CTAs land on pages that clearly add information beyond
-   the listing card:
-
-   - `careers.$slug.tsx`: add a "Compensation & benefits" block and an
-     "About the team" paragraph sourced from `jobs[].team`. Keep the
-     existing apply form.
-   - `team.$slug.tsx`: add an "Experience" list, a "Speaking & writing"
-     section linking to 2–3 related insights by focus area, and related
-     case studies the partner led.
-   - `insights.$slug.tsx`: add an author byline card and a "Related
-     reading" list (3 other insights from the same category).
-   - `industries.$slug.tsx`: add a "Representative engagements" list
-     (case studies filtered by `industrySlug`) and a "Services we bring
-     to this industry" grid.
-   - `services.$slug.tsx`: already has related case studies; add a
-     "Typical engagement shape" timeline (Discover → Design → Deliver →
-     Sustain) and a "Sample deliverables" list.
-   - `case-studies.$slug.tsx`: already rich (KPIs + PDF). Add a "Team
-     on this engagement" row showing 2–3 `team` members and a
-     timeline/duration field.
-
-3. **Data tweaks** (`src/data/`):
-   - `careers.ts`: add optional `benefits: string[]` and
-     `aboutTeam: string` per job.
-   - `team.ts`: add optional `experience: string[]` and
-     `caseStudies: string[]` (slugs) per member.
-   - `caseStudies.ts`: add optional `teamSlugs: string[]` and
-     `duration: string` per case study.
-   - All new fields are optional so existing render paths keep working.
-
-4. **Verify**: open each detail URL in the preview, confirm no console
-   errors, and confirm the detail page shows materially more content
-   than the listing card.
-
-## Technical notes
-
-- No router or routeTree changes required — files already register
-  correctly in `src/routeTree.gen.ts`.
-- No new dependencies.
-- All link patterns stay `<Link to="/x/$slug" params={{ slug }}>`; no
-  string interpolation.
-- The restart in step 1 is the actual fix for the user-visible
-  "redirects to parent" symptom; steps 2–3 address the underlying
-  request that the detail pages show "more detailed information".
+### 5. Functional verification
+- Clear consent and verify the first-visit banner.
+- Exercise Accept All, Reject Non-Essential, Customize, toggle changes, Save Preferences, Close, and footer Cookie Settings.
+- Inspect LocalStorage after each save and verify refresh does not restore the banner after consent.
+- Confirm saved selections reload when reopened from the footer.
+- Test the complete interaction on mobile, tablet, and desktop viewports, including keyboard Escape/focus behavior.
+- Check browser console output for errors after the interaction suite.
