@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { CookieBanner } from "../components/CookieBanner";
+import { CookieConsentProvider } from "../components/CookieConsent";
 import { company } from "../data/company";
 
 function NotFoundComponent() {
@@ -48,16 +49,26 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">This page didn't load</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Something went wrong. Try again or head home.</p>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+          This page didn't load
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Something went wrong. Try again or head home.
+        </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="inline-flex items-center justify-center rounded-md bg-[var(--navy-deep)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--navy)]"
           >
             Try again
           </button>
-          <a href="/" className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
+          <a
+            href="/"
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
+          >
             Go home
           </a>
         </div>
@@ -96,11 +107,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap",
+      },
     ],
-    scripts: [
-      { type: "application/ld+json", children: JSON.stringify(orgJsonLd) },
-    ],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(orgJsonLd) }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -126,14 +138,16 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <main id="main" className="flex-1">
-          <Outlet />
-        </main>
-        <SiteFooter />
-        <CookieBanner />
-      </div>
+      <CookieConsentProvider>
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          <main id="main" className="flex-1">
+            <Outlet />
+          </main>
+          <SiteFooter />
+          <CookieBanner />
+        </div>
+      </CookieConsentProvider>
     </QueryClientProvider>
   );
 }
