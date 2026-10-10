@@ -6,11 +6,11 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { CookieBanner } from "../components/CookieBanner";
@@ -39,12 +39,9 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -102,14 +99,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: company.description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { title: "Lovable App" },
-      { property: "og:title", content: "Lovable App" },
-      { name: "twitter:title", content: "Lovable App" },
       { name: "description", content: "A modern, responsive corporate business website for consulting and professional services firms." },
       { property: "og:description", content: "A modern, responsive corporate business website for consulting and professional services firms." },
       { name: "twitter:description", content: "A modern, responsive corporate business website for consulting and professional services firms." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2b19b9f3-a802-401c-aeea-a128879d6ab1/id-preview-eee4da03--a91fa3aa-721c-4fdc-881a-880a4f1ab15d.lovable.app-1781341188541.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2b19b9f3-a802-401c-aeea-a128879d6ab1/id-preview-eee4da03--a91fa3aa-721c-4fdc-881a-880a4f1ab15d.lovable.app-1781341188541.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
